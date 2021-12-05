@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="Chess" Height="580" Width="740" ResizeMode="NoResize">
 
+
     <Grid x:Name="chessBackBoard" Background="Peru">
         <Grid.RowDefinitions>
             <RowDefinition Height ="20" />
@@ -20,33 +21,36 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <UniformGrid x:Name="chessBoardBackground" Grid.Row="1" Grid.Column="1" Rows="8" Columns="8"/>
+        <UniformGrid x:Name="chessBoardBackground" Grid.Row="1" Grid.Column="1" Rows="8" Columns="8" />
 
         <Border BorderBrush="Black" BorderThickness="2"  Grid.Column="1"  Grid.Row="1"/>
 
-        <UniformGrid x:Name="chessLetter1" Grid.Row="2" Grid.Column="1" Columns="8"/>
+        <UniformGrid x:Name="chessLetter1" Grid.Row="2" Grid.Column="1" Columns="8" />
         <UniformGrid x:Name="chessNumber1" Grid.Row="1" Grid.Column="0" Rows="8"/>
-        <UniformGrid x:Name="chessLetter2" Grid.Row="0" Grid.Column="1" Columns="8"/>
-        <UniformGrid x:Name="chessNumber2" Grid.Row="1" Grid.Column="2" Rows="8"/>
+        <UniformGrid x:Name="chessLetter2" Grid.Row="0" Grid.Column="1" Columns="8" />
+        <UniformGrid x:Name="chessNumber2" Grid.Row="1" Grid.Column="4" Rows="8"/>
 
-        <UniformGrid x:Name="chessBoard" Grid.Row="1" Grid.Column="1" Rows="8" Columns="8"/>
+        <UniformGrid x:Name="chessBoard" Rows="8" Columns="8" Grid.Column="1" Grid.Row="1" />
 
 
-        <Menu Grid.Column="4"  Grid.Row="0">
-            <MenuItem Header="File">
-                <MenuItem Header="Menu" ></MenuItem>
-                <MenuItem Header="Open Project" >
-                    <MenuItem Header="WinForms"></MenuItem>
-                    <MenuItem Header="WPF" ></MenuItem>
-                </MenuItem>
+        <Menu x:Name="menu" Grid.Column="5" Grid.Row="0" Background="RosyBrown">
+            <MenuItem Header="Menu">
+                <MenuItem Header="Restart" Click="RestartClick" ></MenuItem>
                 <Separator />
-                <MenuItem Header="Exit" ></MenuItem>
+                <MenuItem Header="Themes" >
+                    <MenuItem Header="Light" Click="LightThema"></MenuItem>
+                    <MenuItem Header="Dark" Click="DarkThema"></MenuItem>
+                </MenuItem>
             </MenuItem>
-            <MenuItem Header="Edit" ></MenuItem>
-            <MenuItem Header="View" ></MenuItem>
         </Menu>
-
-        <TextBox Grid.Column="4" Grid.Row="1" Background="Tan"></TextBox>
+        <Grid Grid.Column="4" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="4*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBox x:Name="TextBox1" Grid.Row="0" Background="Tan" FontFamily="Arial" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" FontSize="14"/>
+            <Grid x:Name="FunImage" Grid.Row="1"  Background="White"/>
+        </Grid>
         <Grid Grid.Column="4" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="36" />

@@ -208,12 +208,12 @@ namespace Chess
 
         public int turnNumber = 0;
 
-        public string[] sideArray = new string[2] {"White", "Black" };
+        public string[] sideArray = new string[2] { "White", "Black" };
+
+        string[] alpha = { "A","B","C","D","E","F","G","H" };
 
         public void CreateMap()
         {
-            char[] alpha = "ABCDEFGH".ToCharArray();
-
             for (int i = 0; i < 8; i++)
             {
                 TextBlock textBlock = new TextBlock();
@@ -269,6 +269,7 @@ namespace Chess
         public void Pressed(object sender, RoutedEventArgs e)
         {
             NewButton pressedButton = (NewButton)sender;
+
             if (pressedButton.Content != null && pressedButton.Side == turnNumber % 2)
             {
                 if (pressedButton.Content != null && previousButton != null)
@@ -276,21 +277,24 @@ namespace Chess
                     previousButton.Effect = null;
                     previousButton.BorderBrush = Brushes.Black;
                 }
-                BlurEffect blur = new BlurEffect();
-                blur.Radius = 1;
+                BlurEffect blur = new BlurEffect { Radius = 1 };
                 pressedButton.Effect = blur;
                 pressedButton.BorderBrush = Brushes.Red;
                 previousButton = pressedButton;
             }
-            else if (pressedButton.Content == null && previousButton != null || pressedButton.Side != previousButton.Side) //********************************//
+            else if (previousButton != null && (pressedButton.Content == null || pressedButton.Content != null)) //********************************//
                 if (previousButton.Potential(pressedButton.X, pressedButton.Y, pressedButton.Side))
                     Turn(previousButton, pressedButton);
         }
 
         public void Turn(NewButton button1, NewButton button2)
         {
+            TextTurn(button1, button2);
             if (button2.Type == 6)
-                MessageBox.Show("Win");
+            {
+                MessageBox.Show(sideArray[turnNumber % 2] + "Win");
+                DisableButtons();
+            }
             button2.Content = button1.Content;
             button2.Type = button1.Type;
             button2.Side = button1.Side;
@@ -304,13 +308,15 @@ namespace Chess
             turnNumber++;
             TurnTextBox.Text = (turnNumber + 1).ToString();
             SideTextBox.Text = sideArray[turnNumber % 2];
+            Brush[] b = { Brushes.White, Brushes.Black };
+            FunImage.Background = b[turnNumber % 2];
         }
 
         public static bool HorizontalVertical(int x1, int y1, int x2, int y2, int s, bool check)
         {
             if (x1 == x2 || y1 == y2)
             {
-                if(x1 == x2)
+                if (x1 == x2)
                 {
                     int signY = Math.Sign(y1 - y2), y = y1 - signY;
                     if (check)
@@ -359,6 +365,107 @@ namespace Chess
             }
             else
                 return false;
+        }
+
+        public void DisableButtons() //***********************************//
+        {
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    buttonMap[i, j].IsEnabled = false;
+        }
+
+        public void RestartClick(object sender, RoutedEventArgs e)
+        {
+            chessBoard.Children.Clear();
+            previousButton = null;
+            turnNumber = 0;
+            TextBox1.Text = null;
+            TurnTextBox.Text = (turnNumber + 1).ToString();
+            SideTextBox.Text = sideArray[0];
+            FunImage.Background = Brushes.White;
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                {
+                    buttonMap[i, j] = new NewButton(map[i, j] / 10, map[i, j] % 10, i, j);
+
+                    buttonMap[i, j].Background = null;
+                    buttonMap[i, j].BorderBrush = Brushes.Black;
+
+                    chessBoard.Children.Add(buttonMap[i, j]);
+                }
+            //  CreateMap();
+
+            foreach (UIElement c in chessBoard.Children)
+            {
+                if (c is Button)
+                {
+                    ((Button)c).Click += Pressed;
+                }
+            }
+        }
+
+        public void LightThema(object sender, RoutedEventArgs e)
+        {
+            chessBackBoard.Background = Brushes.Peru;
+            TextBox1.Background = Brushes.Tan;
+            chessBoardBackground.Children.Clear();
+            menu.Background = Brushes.RosyBrown;
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                {
+                    Rectangle rect = new Rectangle();
+                    if ((i + j) % 2 == 0)
+                        rect.Fill = Brushes.Peru;
+                    else
+                        rect.Fill = Brushes.Sienna;
+                    chessBoardBackground.Children.Add(rect);
+                }
+        }
+
+        public void DarkThema(object sender, RoutedEventArgs e)
+        {
+            chessBackBoard.Background = Brushes.Gray;
+            TextBox1.Background = Brushes.DimGray;
+            chessBoardBackground.Children.Clear();
+            menu.Background = Brushes.SlateGray;
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                {
+                    Rectangle rect = new Rectangle();
+                    if ((i + j) % 2 == 0)
+                        rect.Fill = Brushes.Gray;
+                    else
+                        rect.Fill = Brushes.LightGray;
+                    chessBoardBackground.Children.Add(rect);
+                }
+        }
+
+
+        public void TextTurn(NewButton button1, NewButton button2)
+        {
+            int kostyl = 1;
+            string[] fig =
+                {"",
+                "\u2659", //whitePawn
+                "\u2656", //whiteRook
+                "\u2658", //whiteKnight
+                "\u2657", //whiteBsihop
+                "\u2655", //whiteQueen
+                "\u2654", //whiteKing
+
+                "\u265f", //blackPawn
+                "\u265c", //blackRook
+                "\u265e", //blackKnight
+                "\u265d", //blackBsihop
+                "\u265b", //blackQueen
+                "\u265a", //blackKing
+            };
+            if (button2.Side == 2)
+                kostyl = 0;
+            TextBox1.Text +="Turn: " + (turnNumber + 1) + "\t" + fig[button1.Type + 6 * button1.Side] 
+                + " " + alpha[button1.Y].ToLower() + (8 - button1.X)
+                + " " + alpha[button2.Y].ToLower() + (8 - button2.X)
+                + " " + fig[button2.Type + 6 * button2.Side * kostyl] +  "\n";
         }
     }
 }
