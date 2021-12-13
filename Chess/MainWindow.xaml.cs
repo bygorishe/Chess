@@ -28,6 +28,7 @@ namespace Chess
 
             CreateMap();
 
+
             previousButton = null;
 
             foreach (UIElement c in chessBoard.Children)
@@ -97,92 +98,92 @@ namespace Chess
             {
                 this.Side = Side;
                 this.Type = Type;
-                //this.Turn = 0;
                 this.X = X;
                 this.Y = Y;
+                string currentDir = Environment.CurrentDirectory;
                 switch (Side, Type)
                 {
                     case (1, 1):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\pawnBlack.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\pawnBlack.png"));
                             this.Content = img;
                             break;
                         }
                     case (1, 2):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\rookBlack.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\rookBlack.png"));
                             this.Content = img;
                             break;
                         }
                     case (1, 3):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\knightBlack.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\knightBlack.png"));
                             this.Content = img;
                             break;
                         }
                     case (1, 4):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\bishopBlack.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\bishopBlack.png"));
                             this.Content = img;
                             break;
                         }
                     case (1, 5):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\queenBlack.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\queenBlack.png"));
                             this.Content = img;
                             break;
                         }
                     case (1, 6):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\kingBlack.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\kingBlack.png"));
                             this.Content = img;
                             break;
                         }
                     case (0, 1):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\pawnWhite.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\pawnWhite.png"));
                             this.Content = img;
                             break;
                         }
                     case (0, 2):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\rookWhite.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\rookWhite.png"));
                             this.Content = img;
                             break;
                         }
                     case (0, 3):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\knightWhite.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\knightWhite.png"));
                             this.Content = img;
                             break;
                         }
                     case (0, 4):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\bishopWhite.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\bishopWhite.png"));
                             this.Content = img;
                             break;
                         }
                     case (0, 5):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\queenWhite.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\queenWhite.png"));
                             this.Content = img;
                             break;
                         }
                     case (0, 6):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(@"C:\Users\angry\source\repos\Chess\Chess\Fig\kingWhite.png"));
+                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\kingWhite.png"));
                             this.Content = img;
                             break;
                         }
@@ -208,9 +209,11 @@ namespace Chess
 
         public int turnNumber = 0;
 
+        public bool themaLight = true;
+
         public string[] sideArray = new string[2] { "White", "Black" };
 
-        string[] alpha = { "A","B","C","D","E","F","G","H" };
+        string[] alpha = { "A", "B", "C", "D", "E", "F", "G", "H" };
 
         public void CreateMap()
         {
@@ -223,8 +226,7 @@ namespace Chess
                 chessNumber1.Children.Add(textBlock);
 
                 TextBlock textBlock1 = new TextBlock();
-                textBlock1.Text = alpha[i].ToString();
-                //textBlock1.Text = (string)("A" + i);
+                textBlock1.Text = alpha[i];
                 textBlock1.TextAlignment = TextAlignment.Center;
                 textBlock.VerticalAlignment = VerticalAlignment.Center;
                 chessLetter1.Children.Add(textBlock1);
@@ -250,17 +252,11 @@ namespace Chess
                 {
                     buttonMap[i, j] = new NewButton(map[i, j] / 10, map[i, j] % 10, i, j);
 
-                    buttonMap[i, j].Background = null;
                     buttonMap[i, j].BorderBrush = Brushes.Black;
 
-                    Rectangle rect = new Rectangle();
-                    if ((i + j) % 2 == 0)
-                        rect.Fill = Brushes.Peru;
-                    else
-                        rect.Fill = Brushes.Sienna;
                     chessBoard.Children.Add(buttonMap[i, j]);
-                    chessBoardBackground.Children.Add(rect);
                 }
+            themaChange(themaLight);
 
             TurnTextBox.Text = (turnNumber + 1).ToString();
             SideTextBox.Text = sideArray[turnNumber % 2];
@@ -272,7 +268,7 @@ namespace Chess
 
             if (pressedButton.Content != null && pressedButton.Side == turnNumber % 2)
             {
-                if (pressedButton.Content != null && previousButton != null)
+                if (previousButton != null)
                 {
                     previousButton.Effect = null;
                     previousButton.BorderBrush = Brushes.Black;
@@ -282,7 +278,7 @@ namespace Chess
                 pressedButton.BorderBrush = Brushes.Red;
                 previousButton = pressedButton;
             }
-            else if (previousButton != null && (pressedButton.Content == null || pressedButton.Content != null)) //********************************//
+            else if (previousButton != null && (pressedButton.Content == null || pressedButton.Content != null))
                 if (previousButton.Potential(pressedButton.X, pressedButton.Y, pressedButton.Side))
                     Turn(previousButton, pressedButton);
         }
@@ -388,12 +384,15 @@ namespace Chess
                 {
                     buttonMap[i, j] = new NewButton(map[i, j] / 10, map[i, j] % 10, i, j);
 
-                    buttonMap[i, j].Background = null;
                     buttonMap[i, j].BorderBrush = Brushes.Black;
 
                     chessBoard.Children.Add(buttonMap[i, j]);
                 }
-            //  CreateMap();
+
+            if (themaLight)
+                LightThema(sender, e);
+            else
+                DarkThema(sender, e);
 
             foreach (UIElement c in chessBoard.Children)
             {
@@ -406,37 +405,48 @@ namespace Chess
 
         public void LightThema(object sender, RoutedEventArgs e)
         {
+            themaLight = true;
             chessBackBoard.Background = Brushes.Peru;
             TextBox1.Background = Brushes.Tan;
-            chessBoardBackground.Children.Clear();
             menu.Background = Brushes.RosyBrown;
-            for (int i = 0; i < 8; i++)
-                for (int j = 0; j < 8; j++)
-                {
-                    Rectangle rect = new Rectangle();
-                    if ((i + j) % 2 == 0)
-                        rect.Fill = Brushes.Peru;
-                    else
-                        rect.Fill = Brushes.Sienna;
-                    chessBoardBackground.Children.Add(rect);
-                }
+            themaChange(themaLight);
         }
 
         public void DarkThema(object sender, RoutedEventArgs e)
         {
+            themaLight = false;
             chessBackBoard.Background = Brushes.Gray;
             TextBox1.Background = Brushes.DimGray;
-            chessBoardBackground.Children.Clear();
             menu.Background = Brushes.SlateGray;
+            themaChange(themaLight);
+        }
+
+        public void themaChange(bool temp)
+        {
+            Brush br1, br2;
+            if (temp)
+            {
+                chessBackBoard.Background = Brushes.Peru;
+                TextBox1.Background = Brushes.Tan;
+                menu.Background = Brushes.RosyBrown;
+                br1 = Brushes.Peru;
+                br2 = Brushes.Sienna;
+            }
+            else
+            {
+                chessBackBoard.Background = Brushes.Gray;
+                TextBox1.Background = Brushes.DimGray;
+                menu.Background = Brushes.SlateGray;
+                br1 = Brushes.Gray;
+                br2 = Brushes.LightGray;
+            }
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
                 {
-                    Rectangle rect = new Rectangle();
                     if ((i + j) % 2 == 0)
-                        rect.Fill = Brushes.Gray;
+                        buttonMap[i, j].Background = br1;
                     else
-                        rect.Fill = Brushes.LightGray;
-                    chessBoardBackground.Children.Add(rect);
+                        buttonMap[i, j].Background = br2;
                 }
         }
 
@@ -462,10 +472,10 @@ namespace Chess
             };
             if (button2.Side == 2)
                 kostyl = 0;
-            TextBox1.Text +="Turn: " + (turnNumber + 1) + "\t" + fig[button1.Type + 6 * button1.Side] 
+            TextBox1.Text += "Turn: " + (turnNumber + 1) + "\t" + fig[button1.Type + 6 * button1.Side]
                 + " " + alpha[button1.Y].ToLower() + (8 - button1.X)
                 + " " + alpha[button2.Y].ToLower() + (8 - button2.X)
-                + " " + fig[button2.Type + 6 * button2.Side * kostyl] +  "\n";
+                + " " + fig[button2.Type + 6 * button2.Side * kostyl] + "\n";
         }
     }
 }

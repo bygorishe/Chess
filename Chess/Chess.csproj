@@ -6,4 +6,11 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Fig\**" />
+    <EmbeddedResource Remove="Fig\**" />
+    <None Remove="Fig\**" />
+    <Page Remove="Fig\**" />
+  </ItemGroup>
+
 </Project>
