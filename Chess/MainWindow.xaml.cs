@@ -28,16 +28,7 @@ namespace Chess
 
             CreateMap();
 
-
-            previousButton = null;
-
-            foreach (UIElement c in chessBoard.Children)
-            {
-                if (c is Button)
-                {
-                    ((Button)c).Click += Pressed;
-                }
-            }
+            Start();
         }
 
         public class NewButton : Button
@@ -245,21 +236,7 @@ namespace Chess
                 textBlock1.TextAlignment = TextAlignment.Center;
                 textBlock.VerticalAlignment = VerticalAlignment.Center;
                 chessLetter2.Children.Add(textBlock1);
-            }
-
-            for (int i = 0; i < 8; i++)
-                for (int j = 0; j < 8; j++)
-                {
-                    buttonMap[i, j] = new NewButton(map[i, j] / 10, map[i, j] % 10, i, j);
-
-                    buttonMap[i, j].BorderBrush = Brushes.Black;
-
-                    chessBoard.Children.Add(buttonMap[i, j]);
-                }
-            themaChange(themaLight);
-
-            TurnTextBox.Text = (turnNumber + 1).ToString();
-            SideTextBox.Text = sideArray[turnNumber % 2];
+            }           
         }
 
         public void Pressed(object sender, RoutedEventArgs e)
@@ -372,6 +349,11 @@ namespace Chess
 
         public void RestartClick(object sender, RoutedEventArgs e)
         {
+            Start();
+        }
+
+        public void Start()
+        {
             chessBoard.Children.Clear();
             previousButton = null;
             turnNumber = 0;
@@ -389,10 +371,7 @@ namespace Chess
                     chessBoard.Children.Add(buttonMap[i, j]);
                 }
 
-            if (themaLight)
-                LightThema(sender, e);
-            else
-                DarkThema(sender, e);
+            themaChange(themaLight);
 
             foreach (UIElement c in chessBoard.Children)
             {
@@ -405,20 +384,20 @@ namespace Chess
 
         public void LightThema(object sender, RoutedEventArgs e)
         {
-            themaLight = true;
-            chessBackBoard.Background = Brushes.Peru;
-            TextBox1.Background = Brushes.Tan;
-            menu.Background = Brushes.RosyBrown;
-            themaChange(themaLight);
+            if (!themaLight)
+            {
+                themaLight = true;
+                themaChange(themaLight);
+            }
         }
 
         public void DarkThema(object sender, RoutedEventArgs e)
         {
-            themaLight = false;
-            chessBackBoard.Background = Brushes.Gray;
-            TextBox1.Background = Brushes.DimGray;
-            menu.Background = Brushes.SlateGray;
-            themaChange(themaLight);
+            if (themaLight)
+            {
+                themaLight = false;
+                themaChange(themaLight);
+            }
         }
 
         public void themaChange(bool temp)
