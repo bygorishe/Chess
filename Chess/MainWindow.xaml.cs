@@ -197,17 +197,34 @@ namespace Chess
         {
            {12,13,14,15,16,14,13,12},
            {11,11,11,11,11,11,11,11},
-           {20,20,20,20,20,20,20,20 },
-           {20,20,20,20,20,20,20,20 },
-           {20,20,20,20,20,20,20,20 },
-           {20,20,20,20,20,20,20,20 },
+           {20,20,20,20,20,20,20,20},
+           {20,20,20,20,20,20,20,20},
+           {20,20,20,20,20,20,20,20},
+           {20,20,20,20,20,20,20,20},
            {1,1,1,1,1,1,1,1},
            {2,3,4,5,6,4,3,2}
         };
 
+        //public int[,] tempmap = new int[8, 8]
+        //{
+        //   {12,13,14,15,16,14,13,12},
+        //   {11,11,11,11,11,11,11,11},
+        //   {0,0,0,0,0,0,0,0},
+        //   {0,0,0,0,0,0,0,0},
+        //   {0,0,0,0,0,0,0,0},
+        //   {0,0,0,0,0,0,0,0},
+        //   {1,1,1,1,1,1,1,1},
+        //   {2,3,4,5,6,4,3,2}
+        //};
+
+
         public static NewButton[,] buttonMap = new NewButton[8, 8];
 
         public NewButton previousButton = new NewButton();
+
+        public NewButton whiteKing ;
+
+        public NewButton blackKing;
 
         public int turnNumber = 0;
 
@@ -268,11 +285,22 @@ namespace Chess
                 previousButton = pressedButton;
             }
             else if (previousButton != null && (pressedButton.Content == null || pressedButton.Content != null) && previousButton.Potential(pressedButton.X, pressedButton.Y, pressedButton.Side))
+            {
                 Turn(previousButton, pressedButton);
+                if (Shah(whiteKing))
+                    MessageBox.Show("test");
+            }
+
         }
 
         public void Turn(NewButton button1, NewButton button2)
         {
+            //********************************************************************//
+            //tempmap[button2.X, button2.Y] = tempmap[button1.X, button1.Y];
+            //tempmap[button1.X, button1.Y] = 0;
+            //**********************************************************************//
+
+
             TextTurn(button1, button2);
             if (button2.Type == ChessType.King)
             {
@@ -292,6 +320,15 @@ namespace Chess
             SideTextBox.Text = ((ChessSide)(turnNumber % 2)).ToString();
             Brush[] b = { Brushes.White, Brushes.Black };
             FunImage.Background = b[turnNumber % 2];
+        }
+
+        public bool Shah(NewButton button)
+        {
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    if (button.Side != buttonMap[i, j].Side && buttonMap[i, j].Potential(button.X, button.Y, button.Side))
+                        return true;
+            return false;
         }
 
         public static bool HorizontalVertical(int x1, int y1, int x2, int y2, ChessSide s, bool check)
@@ -378,7 +415,14 @@ namespace Chess
                     chessBoard.Children.Add(buttonMap[i, j]);
                 }
 
-            ThemaChange(themaLight);
+
+            //**************************************разобраться с ссылками на королей
+            whiteKing = buttonMap[7, 4];
+
+        blackKing = buttonMap[0, 4];
+        //**************************************
+
+        ThemaChange(themaLight);
 
             foreach (UIElement c in chessBoard.Children)
                 if (c is Button)
