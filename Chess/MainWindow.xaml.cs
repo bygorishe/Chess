@@ -82,90 +82,89 @@ namespace Chess
                 this.NumOfFirstTurn = 0;
                 this.X = X;
                 this.Y = Y;
-                string currentDir = Environment.CurrentDirectory;             //****************************************************ВСТРОИТЬ В ПРОЕКТ*************************************//
                 switch (this.Side, this.Type)
                 {
                     case (ChessSide.Black, ChessType.Pawn):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\pawnBlack.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/pawnBlack.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
                     case (ChessSide.Black, ChessType.Rook):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\rookBlack.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/rookBlack.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
                     case (ChessSide.Black, ChessType.Knight):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\knightBlack.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/knightBlack.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
                     case (ChessSide.Black, ChessType.Bishop):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\bishopBlack.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/bishopBlack.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
                     case (ChessSide.Black, ChessType.Quenn):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\queenBlack.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/queenBlack.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
                     case (ChessSide.Black, ChessType.King):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\kingBlack.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/kingBlack.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
                     case (ChessSide.White, ChessType.Pawn):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\pawnWhite.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/pawnWhite.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
                     case (ChessSide.White, ChessType.Rook):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\rookWhite.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/rookWhite.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
                     case (ChessSide.White, ChessType.Knight):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\knightWhite.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/lnightWhite.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
                     case (ChessSide.White, ChessType.Bishop):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\bishopWhite.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/bishopWhite.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
                     case (ChessSide.White, ChessType.Quenn):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\queenWhite.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/queenWhite.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
                     case (ChessSide.White, ChessType.King):
                         {
                             Image img = new Image();
-                            img.Source = new BitmapImage(new Uri(currentDir + @"\Fig\kingWhite.png"));
+                            img.Source = new BitmapImage(new Uri("Fig/kingWhite.jpg", UriKind.Relative));
                             this.Content = img;
                             break;
                         }
