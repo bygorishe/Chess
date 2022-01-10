@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>chessIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Fig\chessIcon.ico</ApplicationIcon>
     <Win32Resource />
   </PropertyGroup>
 

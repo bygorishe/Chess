@@ -36,7 +36,7 @@ namespace Chess
                             //взятие на проходе
                             else if ((x2 == X + temp && (Y == y2 + 1 || Y == y2 - 1) && s == ChessSide.NoSide) &&  //клетка по диагонали свободна
                                 (X == 3 || X == 4) &&  //пешка противника сделала ход на две клекти (тут какбы своей X, но как бы да)
-                                    (buttonMap[X, Y + Sign(y2 - Y)].Side != Side && buttonMap[X, Y + Sign(y2 - Y)].NumOfFirstTurn == turnNumber - 1)) //пешка протиника слева или справа, а также ходила на прошлом ходу
+                                    (buttonMap[X, Y + Sign(y2 - Y)].Side != Side && buttonMap[X, Y + Sign(y2 - Y)].NumOfFirstTurn == turnNumber )) //пешка протиника слева или справа, а также ходила на прошлом ходу
                             {
                                 buttonMap[X, Y + Sign(y2 - Y)].Side = ChessSide.NoSide;
                                 buttonMap[X, Y + Sign(y2 - Y)].Type = ChessType.Notype;
@@ -159,10 +159,10 @@ namespace Chess
             }
         }
 
-        readonly int[,] map = new int[8, 8]  //изначальное расположение фигур
+        readonly int[,] map = new int[8, 8]  //изначальное расположение фигур 
         {
-           {12,13,14,15,16,14,13,12},
-           {11,11,11,11,11,11,11,11},
+           {12,13,14,15,16,14,13,12},           // первое число - сторона (1-черные, 2-пустые, 0-белые)
+           {11,11,11,11,11,11,11,11},           // второе число - тип  
            {20,20,20,20,20,20,20,20},
            {20,20,20,20,20,20,20,20},
            {20,20,20,20,20,20,20,20},
@@ -170,6 +170,19 @@ namespace Chess
            {1,1,1,1,1,1,1,1},
            {2,3,4,5,6,4,3,2}
         };
+
+        //****тестовое для разных ситуаций***//
+        //readonly int[,] map = new int[8, 8]  //изначальное расположение фигур 
+        //{
+        //   {12,13,14,15,16,14,13,12},           // первое число - сторона (1-черные, 2-пустые, 0-белые)
+        //   {11,11,11,11,11,11,11,11},           // второе число - тип  
+        //   {20,20,20,20,20,20,20,20},
+        //   {20,15,20,20,20,20,20,20},
+        //   {20,20,20,20,20,20,20,20},
+        //   {20,20,20,20,20,20,20,20},
+        //   {20,20,20,20,20,20,20,20},
+        //   {2,20,20,20,6,20,20,2}
+        //};
 
         public enum ChessSide
         {
@@ -259,13 +272,11 @@ namespace Chess
                 chessNumber1.Children.Add(textBlock);
 
                 TextBlock textBlock1 = new TextBlock();
-                //textBlock1.Text = alpha[i];
                 textBlock1.Text = ((char)(65 + i)).ToString();
                 textBlock1.TextAlignment = TextAlignment.Center;
                 textBlock.VerticalAlignment = VerticalAlignment.Center;
                 chessLetter1.Children.Add(textBlock1);
             }
-
             for (int i = 0; i < 8; i++)
             {
                 TextBlock textBlock = new TextBlock();
@@ -275,7 +286,6 @@ namespace Chess
                 chessNumber2.Children.Add(textBlock);
 
                 TextBlock textBlock1 = new TextBlock();
-                //textBlock1.Text = alpha[i].ToString();
                 textBlock1.Text = ((char)(65 + i)).ToString();
                 textBlock1.TextAlignment = TextAlignment.Center;
                 textBlock.VerticalAlignment = VerticalAlignment.Center;
@@ -317,8 +327,66 @@ namespace Chess
         public void Pressed(object sender, RoutedEventArgs e) //эвент нажатия на кнопку
         {
             NewButton pressedButton = (NewButton)sender;  //текущая кнопка
+
+            //второе нажатие если рокировка
+            if (previousButton != null && previousButton.Side == pressedButton.Side && previousButton.Type == ChessType.King && pressedButton.Type == ChessType.Rook
+                && pressedButton.NumOfFirstTurn == 0 && previousButton.NumOfFirstTurn == 0)
+            {
+                //итак, коротко о рокировке.  нам нужно чтобы все клетки межку королем и ладьей были свободны
+                //также, нам нужно чтобы король, а также две клекти(именно две которые займут места король и ладья,
+                //даже при длинной рокировке нужны лишь две эти клетки, клетка около ладьи при длинной и сама ладья
+                //могу быть связаны боем) от него были недостижимы для противника
+                //проблему доставляет то, что пустые клетки ПУСТЫЕ), поэтому мы не сможет узнать наверняка
+                //для этого нужно будет временно сделать эти клетки не пустыми(сторону и номер первого хода)
+                //далее все это исправиться из-за особенности нашей функции хода
+                int tempWay = Sign(pressedButton.Y - previousButton.Y);
+                bool castling = true;//возможность рокировки
+                string str = "";
+                if (tempWay == 1) //короткая
+                {
+                    str = "O-O";
+                    //подумать над оптимизацией алгоритма
+                    for (int j = previousButton.Y + 1; j < pressedButton.Y; j++)
+                        if (buttonMap[previousButton.X, j].Side != ChessSide.NoSide)
+                            castling = false;
+                    for (int i = previousButton.Y; i < pressedButton.Y; i++)
+                    {
+                        buttonMap[previousButton.X, i].Side = previousButton.Side;
+                        buttonMap[previousButton.X, i].NumOfFirstTurn = turnNumber + 1;
+                        if (Shah(buttonMap[previousButton.X, i])) //используем функцию шаха для того чтобы узнать может ли фигура противника на эту клетку
+                            castling = false;
+                    }
+                }
+                else //длинная
+                {
+                    str = "O-O-O";
+                    for (int j = previousButton.Y - 1; j > pressedButton.Y; j--)
+                        if (buttonMap[previousButton.X, j].Side != ChessSide.NoSide)
+                            castling = false;
+                    for (int i = previousButton.Y; i > pressedButton.Y + 1; i--)
+                    {
+                        buttonMap[previousButton.X, i].Side = previousButton.Side;
+                        buttonMap[previousButton.X, i].NumOfFirstTurn = turnNumber + 1;
+                        if (Shah(buttonMap[previousButton.X, i]))
+                            castling = false;
+                    }
+                }
+
+                if (castling)//если рокировка возможна
+                {
+                    Turn(previousButton, buttonMap[previousButton.X, previousButton.Y + 2 * tempWay],true);  //король две клетки в сторону
+                    Turn(pressedButton, buttonMap[previousButton.X, previousButton.Y + tempWay],true);  //ладья за короля
+                    turnNumber++;
+                    TurnTextBox.Text = (turnNumber + 1).ToString();
+                    SideTextBox.Text = ((ChessSide)(turnNumber % 2)).ToString();
+                    FunImage.Background = brushes[turnNumber % 2];
+                    TextBox1.Text += "Turn: " + (turnNumber ) + "\t" + str +"\n";
+                }
+            }
+
+
             //первое нажатие
-            if (pressedButton.Content != null && pressedButton.Side == (ChessSide)(turnNumber % 2))
+            else if (pressedButton.Content != null && pressedButton.Side == (ChessSide)(turnNumber % 2))
             {
                 if (previousButton != null) //убираем выделение если выбираем союзную фигуру
                 {
@@ -326,20 +394,19 @@ namespace Chess
                     previousButton.BorderBrush = Brushes.Black;
                     previousButton.BorderThickness = new Thickness(1);
                 }
-                pressedButton.BorderBrush = Brushes.AliceBlue;                    //***************какой-то эффект нужен более интересный для выделения
+                pressedButton.BorderBrush = Brushes.Aquamarine;                    //***************какой-то эффект нужен более интересный для выделения
                 pressedButton.BorderThickness = new Thickness(5);
                 previousButton = pressedButton;   //запоминаем первое нажатие
             }
             //второе
             else if (previousButton != null && (pressedButton.Content == null || pressedButton.Content != null) && previousButton.Potential(pressedButton.X, pressedButton.Y, pressedButton.Side))
             {
-                Turn(previousButton, pressedButton);
-                if (previousButton != null)  //убираем выделение после того как сделали ход
-                {
-                    previousButton.Effect = null;
-                    previousButton.BorderBrush = Brushes.Black;
-                    previousButton.BorderThickness = new Thickness(1);
-                }
+                Turn(previousButton, pressedButton,false);
+                //убираем выделение после того как сделали ход
+                previousButton.Effect = null;
+                previousButton.BorderBrush = Brushes.Black;
+                previousButton.BorderThickness = new Thickness(1);
+
                 //***************************************//
                 if ((turnNumber % 2) == 0)
                     whiteShah = Shah(whiteKingPointer);
@@ -349,12 +416,10 @@ namespace Chess
                 prev1Button = previousButton; //для отката хода
                 prev2Button = pressedButton;
             }
-
         }
 
-        public void Turn(NewButton button1, NewButton button2)
+        public void Turn(NewButton button1, NewButton button2, bool castling)
         {
-            TextTurn(button1, button2); //запись хода
             if (button2.Type == ChessType.King)//если срублен король
             {
                 MessageBox.Show((ChessSide)(turnNumber % 2) + " Win");
@@ -369,7 +434,7 @@ namespace Chess
             //**************************************************//
 
             if(button1.NumOfFirstTurn == 0)  //отмечаем ход на котором фигура походила, если до этого она не совершала ходы (для рокировки и пешек)
-                button1.NumOfFirstTurn = turnNumber;
+                button1.NumOfFirstTurn = turnNumber+1;
 
             //свапаем
             button2.Content = button1.Content;
@@ -391,12 +456,15 @@ namespace Chess
                 transButton = button2;
                 Transformation(button2.Side, button2.X, button2.Y);
             }
-
-            //тектовые изменения
-            turnNumber++;
-            TurnTextBox.Text = (turnNumber + 1).ToString();
-            SideTextBox.Text = ((ChessSide)(turnNumber % 2)).ToString();
-            FunImage.Background = brushes[turnNumber % 2];
+            if (!castling)
+            {
+                TextTurn(button1, button2); //запись хода
+                //тектовые изменения
+                turnNumber++;
+                TurnTextBox.Text = (turnNumber + 1).ToString();
+                SideTextBox.Text = ((ChessSide)(turnNumber % 2)).ToString();
+                FunImage.Background = brushes[turnNumber % 2];
+            }
         }
 
         public void Transformation(ChessSide t, int X, int Y) //трансформер пешки
@@ -460,11 +528,8 @@ namespace Chess
         {
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
-                    if (button.Side != buttonMap[i, j].Side && buttonMap[i, j].Potential(button.X, button.Y, button.Side))//если кто-то может дойти до короля
-                    {
-                        FunImage.Background = Brushes.Red;
+                    if (button.Side != buttonMap[i, j].Side && buttonMap[i, j].Side != ChessSide.NoSide && buttonMap[i, j].Potential(button.X, button.Y, button.Side))//если кто-то может дойти до короля
                         return true;
-                    }
             return false;
         }
 
@@ -525,7 +590,6 @@ namespace Chess
 
         public void TextTurn(NewButton button1, NewButton button2)   //*************тут подумать с символами
         {
-            int kostyl = 1;
             string[] fig =
                 {"",
                 "\u2659", //whitePawn
@@ -542,14 +606,10 @@ namespace Chess
                 "\u265b", //blackQueen
                 "\u265a", //blackKing
             };
-            //if (button2.Side == ChessSide.NoSide)
-            //    kostyl = 0;
-            //TextBox1.Text += "Turn: " + (turnNumber + 1) + "\t" + fig[button1.Type + 6 * button1.Side]
-            //        + " " + ((char)(65 + button1.Y)).ToString().ToLower() + (8 - button1.X)
-            //        + " " + alpha[button2.Y].ToLower() + (8 - button2.X)
-            //        + " " + fig[button2.Type + 6 * (int)temp * kostyl] + "\n";
-            //string temp = button1.Side.ToString();
-            //int n = button1.Side;
+            TextBox1.Text += "Turn: " + (turnNumber + 1) + "\t" + /*fig[button1.Type + 6 * button1.Side]
+                    +*/ " " + ((char)(65 + button1.Y)).ToString().ToLower() + (8 - button1.X)
+                    + " " + ((char)(65 + button2.Y)).ToString().ToLower() + (8 - button2.X)
+                    + " "/* + fig[button2.Type + 6 * (int)temp * kostyl] */+ "\n";
         }
     }
 }
