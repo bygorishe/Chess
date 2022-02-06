@@ -15,175 +15,6 @@ namespace Chess
             CreateMap(); //отрисовка задника
             Start();  //фигуры и прочее
         }
-        public class NewButton : Button
-        {
-            public ChessSide Side { get; set; }
-            public int NumOfFirstTurn = 0;
-            public ChessType Type { get; set; }
-            public int X { get; set; }
-            public int Y { get; set; }
-            public bool Potential(int x2, int y2, ChessSide s)
-            {
-                switch (Type)
-                {
-                    case ChessType.Pawn:
-                        {
-                            int temp = 1;
-                            if (Side == 0)  //в зависимости от стороны ход пешки либо вниз либо вверх
-                                temp = -1;
-                            if (NumOfFirstTurn == 0) //первый ход на одну или две клетки        
-                                return (x2 == X + temp || (x2 == X + 2 * temp && buttonMap[X + temp, Y].Type == 0)) && Y == y2 && s == ChessSide.NoSide || (s != Side && s != ChessSide.NoSide && x2 == X + temp && (Y == y2 + 1 || Y == y2 - 1));
-                            //взятие на проходе
-                            else if ((x2 == X + temp && (Y == y2 + 1 || Y == y2 - 1) && s == ChessSide.NoSide) &&  //клетка по диагонали свободна
-                                (X == 3 || X == 4) &&  //пешка противника сделала ход на две клекти (тут какбы своей X, но как бы да)
-                                    (buttonMap[X, Y + Sign(y2 - Y)].Side != Side && buttonMap[X, Y + Sign(y2 - Y)].NumOfFirstTurn == turnNumber )) //пешка протиника слева или справа, а также ходила на прошлом ходу
-                            {
-                                buttonMap[X, Y + Sign(y2 - Y)].Side = ChessSide.NoSide;
-                                buttonMap[X, Y + Sign(y2 - Y)].Type = ChessType.Notype;
-                                buttonMap[X, Y + Sign(y2 - Y)].NumOfFirstTurn = 0;
-                                buttonMap[X, Y + Sign(y2 - Y)].Content = null;
-                                return true;
-                            }
-                            else
-                                return (x2 == X + temp && Y == y2 && s == ChessSide.NoSide) || (s != Side && s != ChessSide.NoSide && x2 == X + temp && (Y == y2 + 1 || Y == y2 - 1));
-                        }
-                    case ChessType.Rook:
-                        return HorizontalVertical(X, Y, x2, y2, Side, true);
-                    case ChessType.Knight:
-                            return (Abs(X - x2) == 2 && Abs(Y - y2) == 1) || (Abs(X - x2) == 1 && Abs(Y - y2) == 2); //ходы коня "Г" - две в сторону, один вбок  
-                    case ChessType.Bishop:
-                        return Diagonal(X, Y, x2, y2, Side, true);
-                    case ChessType.Quenn:
-                        return HorizontalVertical(X, Y, x2, y2, Side, true) || Diagonal(X, Y, x2, y2, Side, true);
-                    case ChessType.King:
-                        return HorizontalVertical(X, Y, x2, y2, Side, false) || Diagonal(X, Y, x2, y2, Side, false); //ходы короля аналогичны ферзю, но на 1 клетку, поэтому false
-                    default:
-                        return false;
-                }
-            }
-            public NewButton() { }
-            public NewButton(ChessSide Side, ChessType Type, int X, int Y)
-            {
-                this.Side = Side;
-                this.Type = Type;
-                this.NumOfFirstTurn = 0;   //номер первого хода, нужно для ходы пешки на две клетки и рокировки
-                this.X = X;
-                this.Y = Y;
-                switch (this.Side, this.Type)
-                {
-                    case (ChessSide.Black, ChessType.Pawn):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/pawnBlack.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                    case (ChessSide.Black, ChessType.Rook):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/rookBlack.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                    case (ChessSide.Black, ChessType.Knight):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/knightBlack.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                    case (ChessSide.Black, ChessType.Bishop):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/bishopBlack.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                    case (ChessSide.Black, ChessType.Quenn):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/queenBlack.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                    case (ChessSide.Black, ChessType.King):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/kingBlack.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                    case (ChessSide.White, ChessType.Pawn):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/pawnWhite.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                    case (ChessSide.White, ChessType.Rook):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/rookWhite.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                    case (ChessSide.White, ChessType.Knight):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/knightWhite.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                    case (ChessSide.White, ChessType.Bishop):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/bishopWhite.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                    case (ChessSide.White, ChessType.Quenn):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/queenWhite.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                    case (ChessSide.White, ChessType.King):
-                        {
-                            Image img = new Image();
-                            img.Source = new BitmapImage(new Uri("Fig/kingWhite.png", UriKind.Relative));
-                            this.Content = img;
-                            break;
-                        }
-                }
-            }
-        }
-
-        //readonly int[,] map = new int[8, 8]  //изначальное расположение фигур 
-        //{
-        //   {12,13,14,15,16,14,13,12},           // первое число - сторона (1-черные, 2-пустые, 0-белые)
-        //   {11,11,11,11,11,11,11,11},           // второе число - тип  
-        //   {20,20,20,20,20,20,20,20},
-        //   {20,20,20,20,20,20,20,20},
-        //   {20,20,20,20,20,20,20,20},
-        //   {20,20,20,20,20,20,20,20},
-        //   {1,1,1,1,1,1,1,1},
-        //   {2,3,4,5,6,4,3,2}
-        //};
-
-        //****тестовое для разных ситуаций***//
-        readonly int[,] map = new int[8, 8]  //изначальное расположение фигур 
-        {
-           {12,13,14,15,16,14,13,12},           // первое число - сторона (1-черные, 2-пустые, 0-белые)
-           {11,11,11,11,11,11,11,11},           // второе число - тип  
-           {20,20,20,20,20,20,20,20},
-           {20,15,20,20,20,20,20,20},
-           {20,20,20,20,20,20,20,20},
-           {20,20,20,20,20,20,20,20},
-           {20,20,20,20,20,20,20,20},
-           {2,20,20,20,6,20,20,2}
-        };
-
         public enum ChessSide
         {
             White = 0,
@@ -197,17 +28,206 @@ namespace Chess
             Rook,   //слон
             Knight,  //конь
             Bishop,  //ладбя
-            Quenn,   //ферзь нарисовался
+            Queen,   //ферзь нарисовался
             King  //король
         }
 
+        public abstract class NewButton : Button
+        {
+            public ChessSide Side { get; set; }
+            public int NumOfFirstTurn = 0;
+            public ChessType Type { get; set; }
+            public int X { get; set; }
+            public int Y { get; set; }
+            public abstract bool Potential(int x2, int y2, ChessSide s);
+        }
+
+        public class NoType : NewButton
+        {
+            public override bool Potential(int x2, int y2, ChessSide s)
+            {
+                return true;
+            }
+            public NoType(ChessSide Side, ChessType Type, int X, int Y) {
+                this.Side = Side;
+                this.Type = Type;
+                this.X = X;
+                this.Y = Y;
+            }
+        }
+
+        public class Pawn : NewButton
+        {
+            public override bool Potential(int x2, int y2, ChessSide s)
+            {
+                int temp = 1;
+                if (Side == 0)  //в зависимости от стороны ход пешки либо вниз либо вверх
+                    temp = -1;
+                if (NumOfFirstTurn == 0) //первый ход на одну или две клетки        
+                    return (x2 == X + temp || (x2 == X + 2 * temp && buttonMap[X + temp, Y].Type == 0)) && Y == y2 && s == ChessSide.NoSide || (s != Side && s != ChessSide.NoSide && x2 == X + temp && (Y == y2 + 1 || Y == y2 - 1));
+                //взятие на проходе
+                else if (x2 == X + temp && (Y == y2 + 1 || Y == y2 - 1) && s == ChessSide.NoSide &&  //клетка по диагонали свободна
+                    (X == 3 || X == 4) &&  //пешка противника сделала ход на две клекти (тут какбы своей X, но как бы да)
+                        buttonMap[X, Y + Sign(y2 - Y)].Side != Side && buttonMap[X, Y + Sign(y2 - Y)].NumOfFirstTurn == turnNumber) //пешка протиника слева или справа, а также ходила на прошлом ходу
+                {
+                    //chessBoard.Children.RemovebuttonMap[X, Y + Sign(y2 - Y)]);
+                    NoType button = new NoType(ChessSide.NoSide, ChessType.Notype, X, Y + Sign(y2 - Y));
+                    button.Background = buttonMap[X, Y + Sign(y2 - Y)].Background;
+                    button.BorderBrush = Brushes.Black;
+                    buttonMap[X, Y + Sign(y2 - Y)] = button;
+                    return true;
+                }
+                else
+                    return (x2 == X + temp && Y == y2 && s == ChessSide.NoSide) || (s != Side && s != ChessSide.NoSide && x2 == X + temp && (Y == y2 + 1 || Y == y2 - 1));
+            }
+            public Pawn(ChessSide Side, ChessType Type, int X, int Y)
+            {
+                this.Side = Side;
+                this.Type = Type;
+                this.X = X;
+                this.Y = Y;
+                Image img = new Image();
+                if (this.Side == ChessSide.Black)
+                    img.Source = new BitmapImage(new Uri("Fig/pawnBlack.png", UriKind.Relative));
+                else
+                    img.Source = new BitmapImage(new Uri("Fig/pawnWhite.png", UriKind.Relative));
+                Content = img;
+            }
+        }
+
+        public class Rook : NewButton
+        {
+            public override bool Potential(int x2, int y2, ChessSide s)
+            {
+                return HorizontalVertical(X, Y, x2, y2, Side, true);
+            }
+            public Rook(ChessSide Side, ChessType Type, int X, int Y)
+            {
+                this.Side = Side;
+                this.Type = Type;
+                this.X = X;
+                this.Y = Y;
+                Image img = new Image();
+                if (this.Side == ChessSide.Black)
+                    img.Source = new BitmapImage(new Uri("Fig/rookBlack.png", UriKind.Relative));
+                else
+                    img.Source = new BitmapImage(new Uri("Fig/rookWhite.png", UriKind.Relative));
+                Content = img;
+            }
+        }
+        public class Knight : NewButton
+        {
+            public override bool Potential(int x2, int y2, ChessSide s)
+            {
+                return (Abs(X - x2) == 2 && Abs(Y - y2) == 1) || (Abs(X - x2) == 1 && Abs(Y - y2) == 2); //ходы коня "Г" - две в сторону, один вбок  
+            }
+            public Knight(ChessSide Side, ChessType Type, int X, int Y)
+            {
+                this.Side = Side;
+                this.Type = Type;
+                this.X = X;
+                this.Y = Y;
+                Image img = new Image();
+                if (this.Side == ChessSide.Black)
+                    img.Source = new BitmapImage(new Uri("Fig/knightBlack.png", UriKind.Relative));
+                else
+                    img.Source = new BitmapImage(new Uri("Fig/knightWhite.png", UriKind.Relative));
+                Content = img;
+            }
+        }
+        public class Bishop : NewButton
+        {
+            public override bool Potential(int x2, int y2, ChessSide s)
+            {
+                return Diagonal(X, Y, x2, y2, Side, true);
+            }
+            public Bishop(ChessSide Side, ChessType Type, int X, int Y)
+            {
+                this.Side = Side;
+                this.Type = Type;
+                this.X = X;
+                this.Y = Y;
+                Image img = new Image();
+                if (this.Side == ChessSide.Black)
+                    img.Source = new BitmapImage(new Uri("Fig/bishopBlack.png", UriKind.Relative));
+                else
+                    img.Source = new BitmapImage(new Uri("Fig/bishopWhite.png", UriKind.Relative));
+                Content = img;
+            }
+        }
+        public class Queen : NewButton
+        {
+            public override bool Potential(int x2, int y2, ChessSide s)
+            {
+                return HorizontalVertical(X, Y, x2, y2, Side, true) || Diagonal(X, Y, x2, y2, Side, true);
+            }
+            public Queen(ChessSide Side, ChessType Type, int X, int Y)
+            {
+                this.Side = Side;
+                this.Type = Type;
+                this.X = X;
+                this.Y = Y;
+                Image img = new Image();
+                if (this.Side == ChessSide.Black)
+                    img.Source = new BitmapImage(new Uri("Fig/queenBlack.png", UriKind.Relative));
+                else
+                    img.Source = new BitmapImage(new Uri("Fig/queenWhite.png", UriKind.Relative));
+                Content = img;
+            }
+        }
+        public class King : NewButton
+        {
+            public override bool Potential(int x2, int y2, ChessSide s)
+            {
+                return HorizontalVertical(X, Y, x2, y2, Side, false) || Diagonal(X, Y, x2, y2, Side, false); //ходы короля аналогичны ферзю, но на 1 клетку, поэтому false
+            }
+            public King(ChessSide Side, ChessType Type, int X, int Y)
+            {
+                this.Side = Side;
+                this.Type = Type;
+                this.X = X;
+                this.Y = Y;
+                Image img = new Image();
+                if (this.Side == ChessSide.Black)
+                    img.Source = new BitmapImage(new Uri("Fig/kingBlack.png", UriKind.Relative));
+                else
+                    img.Source = new BitmapImage(new Uri("Fig/kingWhite.png", UriKind.Relative));
+                Content = img;
+            }
+        }
+
+        readonly int[,] map = new int[8, 8]  //изначальное расположение фигур 
+        {
+           {12,13,14,15,16,14,13,12},           // первое число - сторона (1-черные, 2-пустые, 0-белые)
+           {11,11,11,11,11,11,11,11},           // второе число - тип  
+           {20,20,20,20,20,20,20,20},
+           {20,20,20,20,20,20,20,20},
+           {20,20,20,20,20,20,20,20},
+           {20,20,20,20,20,20,20,20},
+           {1,1,1,1,1,1,1,1},
+           {2,3,4,5,6,4,3,2}
+        };
+
+        //****тестовое для разных ситуаций***//
+        //readonly int[,] map = new int[8, 8]  //изначальное расположение фигур 
+        //{
+        //   {12,13,14,15,16,14,13,12},           // первое число - сторона (1-черные, 2-пустые, 0-белые)
+        //   {11,11,11,11,11,11,11,11},           // второе число - тип  
+        //   {20,20,20,20,20,20,20,20},
+        //   {20,15,20,20,20,20,20,20},
+        //   {20,20,20,20,20,20,20,20},
+        //   {20,20,20,20,20,20,20,20},
+        //   {20,20,20,20,20,20,20,20},
+        //   {2,20,20,20,6,20,20,2}
+        //};
+
         public static NewButton[,] buttonMap = new NewButton[8, 8];
 
-        public NewButton previousButton = new NewButton(),  //запоминаем кнопку для хода
-            prev1Button = new NewButton(),  //для отката хода
-            prev2Button = new NewButton(),
-            tempButton = new NewButton(),
-            transButton = new NewButton(),  //для взятия на проходе
+        public NewButton previousButton,  //запоминаем кнопку для хода
+            prev1Button,  //для отката хода
+            prev2Button,
+            tempButton,
+            transButton,  //для взятия на проходе
             whiteKingPointer, blackKingPointer; //указатели на королей для шаха
 
         public int temp;
@@ -310,9 +330,37 @@ namespace Chess
             for (int i = 0; i < 8; i++)    //создаем кнопки-фигуры
                 for (int j = 0; j < 8; j++)
                 {
-                    buttonMap[i, j] = new NewButton((ChessSide)(map[i, j] / 10), (ChessType)(map[i, j] % 10), i, j);
+                    ChessType temp = (ChessType)(map[i, j] % 10);
+                    switch (temp)
+                    {
+                        case ChessType.Pawn:
+                            buttonMap[i, j] = new Pawn((ChessSide)(map[i, j] / 10), (ChessType)(map[i, j] % 10), i, j);
+                            break;
+                        case ChessType.Rook:
+                            buttonMap[i, j] = new Rook((ChessSide)(map[i, j] / 10), (ChessType)(map[i, j] % 10), i, j);
+                            break;
+                        case ChessType.Knight:
+                            buttonMap[i, j] = new Knight((ChessSide)(map[i, j] / 10), (ChessType)(map[i, j] % 10), i, j);
+                            break;
+                        case ChessType.Bishop:
+                            buttonMap[i, j] = new Bishop((ChessSide)(map[i, j] / 10), (ChessType)(map[i, j] % 10), i, j);
+                            break;
+                        case ChessType.Queen:
+                            buttonMap[i, j] = new Queen((ChessSide)(map[i, j] / 10), (ChessType)(map[i, j] % 10), i, j);
+                            break;
+                        case ChessType.King:
+                            buttonMap[i, j] = new King((ChessSide)(map[i, j] / 10), (ChessType)(map[i, j] % 10), i, j);
+                            break;
+                        default:
+                            buttonMap[i, j] = new NoType((ChessSide)(map[i, j] / 10), (ChessType)(map[i, j] % 10), i, j);
+                            break;
+                    }
+
                     buttonMap[i, j].BorderBrush = Brushes.Black;
                     chessBoard.Children.Add(buttonMap[i, j]);
+                    Grid.SetColumn(buttonMap[i, j], j);
+                    Grid.SetRow(buttonMap[i, j], i);
+
                 }
             whiteKingPointer = buttonMap[7, 4];    //делаем ссылки на королей для отслеживания шаха
             blackKingPointer = buttonMap[0, 4];
@@ -438,26 +486,34 @@ namespace Chess
                 MessageBox.Show((ChessSide)(turnNumber % 2) + " Win");
                 DisableButtons();
             }
-            //********************это для отката одного хода******************************//
-            tempButton.Content = button2.Content;
-            tempButton.Type = button2.Type;
-            tempButton.Side = button2.Side;
-            tempButton.NumOfFirstTurn = button2.NumOfFirstTurn;
-            temp = button1.NumOfFirstTurn;
-            //**************************************************//
 
-            if(button1.NumOfFirstTurn == 0)  //отмечаем ход на котором фигура походила, если до этого она не совершала ходы (для рокировки и пешек)
-                button1.NumOfFirstTurn = turnNumber+1;
+            if (button1.NumOfFirstTurn == 0)  //отмечаем ход на котором фигура походила, если до этого она не совершала ходы (для рокировки и пешек)
+                button1.NumOfFirstTurn = turnNumber + 1;
 
-            //свапаем
-            button2.Content = button1.Content;
-            button2.Type = button1.Type;
-            button2.Side = button1.Side;
-            button2.NumOfFirstTurn = button1.NumOfFirstTurn;
-            button1.Content = null;
-            button1.Type = ChessType.Notype;
-            button1.Side = ChessSide.NoSide;
-            button1.NumOfFirstTurn = 0;
+            //chessBoard.Children.Remove(button1);
+            chessBoard.Children.Remove(button2);
+
+            //chessBoard.Children.Add(button1);
+            Grid.SetRow(button1, button2.X);
+            Grid.SetColumn(button1, button2.Y);
+
+            NoType button = new NoType(ChessSide.NoSide, ChessType.Notype, button1.X, button1.Y);
+
+            chessBoard.Children.Add(button);
+
+            Grid.SetRow(button, button1.X);
+            Grid.SetColumn(button, button1.Y);
+
+            buttonMap[button2.X, button2.Y] = button1;
+            buttonMap[button1.X, button1.Y] = button;
+
+            button1.X = button2.X;
+            button1.Y = button2.Y;
+
+            button1.BorderBrush = Brushes.Black;
+            button.BorderBrush = Brushes.Black;
+            button.Background = button1.Background;
+            button1.Background = button2.Background;
 
             if (button2.Type == ChessType.King && button2.Side == ChessSide.White)  //новая ссылка на королей
                 whiteKingPointer = button2;
@@ -467,7 +523,7 @@ namespace Chess
             if (button2.Type == ChessType.Pawn && (button2.X == 0 || button2.X == 7))  //пешка дошла до противооложной стороны
             {
                 transButton = button2;
-                Transformation(button2.Side, button2.X, button2.Y);
+               // Transformation(button2.Side, button2.X, button2.Y);
             }
             if (!castling)
             {
@@ -480,22 +536,22 @@ namespace Chess
             }
         }
 
-        public void Transformation(ChessSide t, int X, int Y) //трансформер пешки
-        {
-            NewButton b1 = new NewButton(t, ChessType.Rook, X, Y),  //варианты превращения пешки
-            b2 = new NewButton(t, ChessType.Bishop, X, Y),
-            b3 = new NewButton(t, ChessType.Knight, X, Y),
-            b4 = new NewButton(t, ChessType.Quenn, X, Y);
+        //public void Transformation(ChessSide t, int X, int Y) //трансформер пешки
+        //{
+        //    NewButton b1 = new NewButton(t, ChessType.Rook, X, Y),  //варианты превращения пешки
+        //    b2 = new NewButton(t, ChessType.Bishop, X, Y),
+        //    b3 = new NewButton(t, ChessType.Knight, X, Y),
+        //    b4 = new NewButton(t, ChessType.Quenn, X, Y);
 
-            FunImage.Children.Add(b1);
-            FunImage.Children.Add(b2);
-            FunImage.Children.Add(b3);
-            FunImage.Children.Add(b4);
+        //    FunImage.Children.Add(b1);
+        //    FunImage.Children.Add(b2);
+        //    FunImage.Children.Add(b3);
+        //    FunImage.Children.Add(b4);
 
-            foreach (UIElement c in FunImage.Children)
-                if (c is NewButton)
-                    ((NewButton)c).Click += TransformationClick;
-        }
+        //    foreach (UIElement c in FunImage.Children)
+        //        if (c is NewButton)
+        //            ((NewButton)c).Click += TransformationClick;
+        //}
 
         public void TransformationClick(object sender, RoutedEventArgs e)
         {
