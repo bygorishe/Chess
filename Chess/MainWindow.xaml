@@ -55,7 +55,7 @@
         <Menu x:Name="menu" Grid.Column="5" Grid.Row="0" Background="RosyBrown">
             <MenuItem Header="Menu">
                 <MenuItem Header="Restart" Click="RestartClick" ></MenuItem>
-                <MenuItem Header="Turn Back(Beta)" Click="BackTurnClick" ></MenuItem>
+                <!--<MenuItem Header="Turn Back(Beta)" Click="BackTurnClick" ></MenuItem>-->
                 <Separator />
                 <MenuItem Header="Themes" >
                     <MenuItem Header="Light" Click="LightThema"></MenuItem>
