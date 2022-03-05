@@ -461,7 +461,7 @@ namespace Chess
                     previousButton.BorderBrush = Brushes.Black;
                     previousButton.BorderThickness = new Thickness(1);
                 }
-                pressedButton.BorderBrush = Brushes.Aquamarine;                    //***************какой-то эффект нужен более интересный для выделения
+                pressedButton.BorderBrush = Brushes.Aquamarine;                    
                 pressedButton.BorderThickness = new Thickness(5);
                 previousButton = pressedButton;   //запоминаем первое нажатие
             }
@@ -508,7 +508,7 @@ namespace Chess
             if (button2.Type == ChessType.King)//если срублен король
             {
                 MessageBox.Show((ChessSide)(turnNumber % 2) + " Win");
-                DisableButtons();
+                //DisableButtons();
             }
 
             if (button1.NumOfFirstTurn == 0)  //отмечаем ход на котором фигура походила, если до этого она не совершала ходы (для рокировки и пешек)
@@ -542,23 +542,19 @@ namespace Chess
             button.Background = button1.Background;
             button1.Background = button2.Background;
 
-            if (button2.Type == ChessType.King && button2.Side == ChessSide.White)  //новая ссылка на королей
-                whiteKingPointer = button2;
-            else if (button2.Type == ChessType.King && button2.Side == ChessSide.Black)
-                blackKingPointer = button2;
+            //if (button2.Type == ChessType.King && button2.Side == ChessSide.White)  //новая ссылка на королей
+            //    whiteKingPointer = button2;
+            //else if (button2.Type == ChessType.King && button2.Side == ChessSide.Black)
+            //    blackKingPointer = button2;
 
             if (button1.Type == ChessType.Pawn && (button1.X == 0 || button1.X == 7))  //пешка дошла до противооложной стороны
             {
                 transButton = button2;
-                Transformation(button2.Side, button2.X, button2.Y);
+                Transformation(button1.Side, button2.X, button2.Y);
             }
 
         }
 
-
-
-
-        //**************************************починить**************************************************************************************************************
         public void Transformation(ChessSide t, int X, int Y) //трансформер пешки
         {
             NewButton b1 = new Rook(t, ChessType.Rook, X, Y),  //варианты превращения пешки
@@ -579,21 +575,34 @@ namespace Chess
         public void TransformationClick(object sender, RoutedEventArgs e)
         {
             NewButton temp = (NewButton)sender;
-            temp.Background = transButton.Background;
+            NewButton newButton = null;
+            switch (temp.Type)
+            {
+                case ChessType.Rook:
+                    newButton = new Rook(temp.Side, ChessType.Rook, temp.X, temp.Y);
+                    break;
+                case ChessType.Bishop:
+                    newButton = new Bishop(temp.Side, ChessType.Bishop, temp.X, temp.Y);
+                    break;
+                case ChessType.Knight:
+                    newButton = new Knight(temp.Side, ChessType.Knight, temp.X, temp.Y);
+                    break;
+                case ChessType.Queen:
+                    newButton = new Queen(temp.Side, ChessType.Queen, temp.X, temp.Y);
+                    break;
+            }
+            newButton.Background = transButton.Background;
             chessBoard.Children.Remove(transButton);
-            Grid.SetRow(temp, transButton.X);
-            Grid.SetColumn(temp, transButton.Y);
-            temp.BorderBrush = Brushes.Black;
-            temp.Click += Pressed;
-            buttonMap[temp.X, temp.Y] = temp;
-            
+            Grid.SetRow(newButton, transButton.X);
+            Grid.SetColumn(newButton, transButton.Y);
+            newButton.BorderBrush = Brushes.Black;
+            newButton.Click += Pressed;
+            buttonMap[newButton.X, newButton.Y] = newButton;          
             FunImage.Children.Clear();  //и убираем кнопки с панельки
-            chessBoard.Children.Add(temp);
+            chessBoard.Children.Add(newButton);
         }
-        //*************************************************************************************************************************************************************
 
-
-
+        #region OldFunctional
         //public void BackTurnClick(object sender, RoutedEventArgs e)  //откат хода.    только одного(((  beta 1.3.3.7
         //{
         //    if (turnNumber != 0)
@@ -624,6 +633,7 @@ namespace Chess
         //    else if (prev1Button.Type == ChessType.King && prev1Button.Side == ChessSide.Black)
         //        blackKingPointer = prev1Button;
         //}
+        #endregion
 
         public bool Shah(NewButton button)    //шах, тоже бета
         {
@@ -638,10 +648,10 @@ namespace Chess
         {
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
-                    buttonMap[i, j].Click += NoCLick; //***********************придумать как починить
+                    buttonMap[i, j].IsEnabled = false; 
         }
 
-        public void NoCLick(object sender, RoutedEventArgs e) { } //просто потому что при .disable все кнопки становять сядефольтными и не прозрачными
+        public void NoCLick(object sender, RoutedEventArgs e) { NewButton Button = (NewButton)sender; }//просто потому что при .disable все кнопки становять сядефольтными и не прозрачными
 
 
         public void LightThema(object sender, RoutedEventArgs e)
@@ -691,29 +701,38 @@ namespace Chess
                 }
         }
 
-
-        public void TextTurn(NewButton button1, NewButton button2)   //*************тут подумать с символами
+        public string ConvertToUnicode(ChessType type, ChessSide side)
         {
-            string[] fig =
-                {"",
-                "\u2659", //whitePawn
-                "\u2656", //whiteRook
-                "\u2658", //whiteKnight
-                "\u2657", //whiteBsihop
-                "\u2655", //whiteQueen
-                "\u2654", //whiteKing
-
-                "\u265f", //blackPawn
-                "\u265c", //blackRook
-                "\u265e", //blackKnight
-                "\u265d", //blackBsihop
-                "\u265b", //blackQueen
-                "\u265a", //blackKing
-            };
-            TextBox1.Text += "Turn: " + (turnNumber + 1) + "\t" + /*fig[button1.Type + 6 * button1.Side]
-                    +*/ " " + ((char)(65 + button1.Y)).ToString().ToLower() + (8 - button1.X)
-                    + " " + ((char)(65 + button2.Y)).ToString().ToLower() + (8 - button2.X)
-                    + " "/* + fig[button2.Type + 6 * (int)temp * kostyl] */+ "\n";
+            string str = "";
+            switch (type)
+            {
+                case ChessType.Pawn:
+                    _ = (side == ChessSide.White) ? str = "\u2659" : str = "\u265f";
+                    break;
+                case ChessType.Rook:
+                    _ = (side == ChessSide.White) ? str = "\u2656" : str = "\u265c";
+                    break;
+                case ChessType.Knight:
+                    _ = (side == ChessSide.White) ? str = "\u2658" : str = "\u265e";
+                    break;
+                case ChessType.Bishop:
+                    _ = (side == ChessSide.White) ? str = "\u2657" : str = "\u265d";
+                    break;
+                case ChessType.Queen:
+                    _ = (side == ChessSide.White) ? str = "\u2655" : str = "\u265b";
+                    break;
+                case ChessType.King:
+                    _ = (side == ChessSide.White) ? str = "\u2654" : str = "\u265a";
+                    break;
+            }
+            return str;
         }
+
+        public void TextTurn(NewButton button1, NewButton button2)  =>
+            TextBox1.Text += "Turn: " + (turnNumber + 1) + "\t" + ConvertToUnicode(button1.Type, button1.Side)
+                    + " " + ((char)(65 + button1.Y)).ToString().ToLower() + (8 - button1.X)
+                    + " " + ((char)(65 + button2.Y)).ToString().ToLower() + (8 - button2.X)
+                    + " " + ConvertToUnicode(button2.Type, button2.Side) + "\n";
+
     }
 }

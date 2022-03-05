@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chess"
         mc:Ignorable="d"
-        Title="Chess" Height="580" Width="740" ResizeMode="NoResize">
+        Title="Chess" Height="580" Width="740" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
 
 
     <Grid x:Name="chessBackBoard" Background="Peru">
