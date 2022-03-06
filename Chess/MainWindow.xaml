@@ -26,7 +26,7 @@
         <UniformGrid x:Name="chessLetter1" Grid.Row="2" Grid.Column="1" Columns="8" />
         <UniformGrid x:Name="chessNumber1" Grid.Row="1" Grid.Column="0" Rows="8"/>
         <UniformGrid x:Name="chessLetter2" Grid.Row="0" Grid.Column="1" Columns="8" />
-        <UniformGrid x:Name="chessNumber2" Grid.Row="1" Grid.Column="4" Rows="8"/>
+        <UniformGrid x:Name="chessNumber2" Grid.Row="1" Grid.Column="2" Rows="8"/>
 
         <Grid x:Name="chessBoard" Grid.Column="1" Grid.Row="1"  Panel.ZIndex="1">
             <Grid.RowDefinitions>

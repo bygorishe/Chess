@@ -31,7 +31,6 @@ namespace Chess
             Queen,   //ферзь нарисовался
             King  //король
         }
-
         public abstract class NewButton : Button
         {
             public ChessSide Side { get; set; }
@@ -41,7 +40,6 @@ namespace Chess
             public int Y { get; set; }
             public abstract bool Potential(int x2, int y2, ChessSide s);
         }
-
         public class NoType : NewButton
         {
             public override bool Potential(int x2, int y2, ChessSide s)
@@ -55,7 +53,6 @@ namespace Chess
                 this.Y = Y;
             }
         }
-
         public class Pawn : NewButton
         {
             public override bool Potential(int x2, int y2, ChessSide s)
@@ -100,7 +97,6 @@ namespace Chess
                 Content = img;
             }
         }
-
         public class Rook : NewButton
         {
             public override bool Potential(int x2, int y2, ChessSide s)
@@ -202,50 +198,38 @@ namespace Chess
             }
         }
 
-        //readonly int[,] map = new int[8, 8]  //изначальное расположение фигур 
-        //{
-        //   {12,13,14,15,16,14,13,12},           // первое число - сторона (1-черные, 2-пустые, 0-белые)
-        //   {11,11,11,11,11,11,11,11},           // второе число - тип  
-        //   {20,20,20,20,20,20,20,20},
-        //   {20,20,20,20,20,20,20,20},
-        //   {20,20,20,20,20,20,20,20},
-        //   {20,20,20,20,20,20,20,20},
-        //   {1,1,1,1,1,1,1,1},
-        //   {2,3,4,5,6,4,3,2}
-        //};
-
-        //****тестовое для разных ситуаций***//
         readonly int[,] map = new int[8, 8]  //изначальное расположение фигур 
         {
-           {12,13,14,15,16,14,13,20},           // первое число - сторона (1-черные, 2-пустые, 0-белые)
-           {11,11,11,11,11,11,11,1},           // второе число - тип  
+           {12,13,14,15,16,14,13,12},           // первое число - сторона (1-черные, 2-пустые, 0-белые)
+           {11,11,11,11,11,11,11,11},           // второе число - тип  
            {20,20,20,20,20,20,20,20},
            {20,20,20,20,20,20,20,20},
-           {20,20,1,20,20,1,20,20},
            {20,20,20,20,20,20,20,20},
            {20,20,20,20,20,20,20,20},
-           {2,20,20,20,6,20,20,2}
+           {1,1,1,1,1,1,1,1},
+           {2,3,4,5,6,4,3,2}
         };
+        //****тестовое для разных ситуаций***//
+        //readonly int[,] map = new int[8, 8]  //изначальное расположение фигур 
+        //{
+        //   {12,13,14,15,16,14,13,20},          // первое число - сторона (1-черные, 2-пустые, 0-белые)
+        //   {11,11,11,11,11,11,11,1},           // второе число - тип  
+        //   {20,20,20,20,20,20,20,20},
+        //   {20,20,20,20,20,20,20,20},
+        //   {20,20,1,20,20,1,20,20},
+        //   {20,20,20,20,20,20,20,20},
+        //   {20,20,20,20,20,20,20,20},
+        //   {2,20,20,20,6,20,20,2}
+        //};
 
         public static NewButton[,] buttonMap = new NewButton[8, 8];
-
-        public static NewButton passantButton;
-
-        public NewButton previousButton,  //запоминаем кнопку для хода
-            prev1Button,  //для отката хода
-            prev2Button,
-            
+        public static NewButton passantButton; //кнопка для рокировки
+        public NewButton previousButton,  //запоминаем кнопку для хода     
             transButton,  //для взятия на проходе
             whiteKingPointer, blackKingPointer; //указатели на королей для шаха
-
-        public int temp;
-
         public static int turnNumber = 0;  //тек. ход
-
         public static bool whiteShah = false, blackShah = false;   //флаг шаха
-
         public bool themaLight = true; //включена ли исходная цветовая тема 
-
         public Brush[] brushes = { Brushes.White, Brushes.Black };
 
         public static bool HorizontalVertical(int x1, int y1, int x2, int y2, ChessSide s, bool check)  //верх низ лево право
@@ -321,10 +305,7 @@ namespace Chess
             }         
         }
 
-        public void RestartClick(object sender, RoutedEventArgs e) //рестарт просто переставляет все фигуры на исходное положение и откатывает текстовые элементы
-        {
-            Start();
-        }
+        public void RestartClick(object sender, RoutedEventArgs e) => Start(); //рестарт просто переставляет все фигуры на исходное положение и откатывает текстовые элементы
 
         public void Start()
         {
@@ -366,7 +347,6 @@ namespace Chess
                     chessBoard.Children.Add(buttonMap[i, j]);
                     Grid.SetColumn(buttonMap[i, j], j);
                     Grid.SetRow(buttonMap[i, j], i);
-
                 }
             whiteKingPointer = buttonMap[7, 4];    //делаем ссылки на королей для отслеживания шаха
             blackKingPointer = buttonMap[0, 4];
@@ -477,13 +457,25 @@ namespace Chess
                     chessBoard.Children.Add(passantButton);
                     passantButton = null;
                 }
-                //***************************************//
+
                 if ((turnNumber % 2) == 0)
+                {
                     whiteShah = Shah(whiteKingPointer);
+                    if (whiteShah)
+                    {
+                        FunImage.Background = Brushes.Red;
+                        TextBox1.Text += "Check White\n";
+                    }
+                }
                 else
+                {
                     blackShah = Shah(blackKingPointer);
-                //******************************************//
-                
+                    if (blackShah)
+                    {
+                        FunImage.Background = Brushes.Red;
+                        TextBox1.Text += "Check Black\n";
+                    }
+                }              
                 //*******зануляем сссылку во избежание ложных ходов*****//
                 previousButton = null; 
             }
@@ -495,10 +487,9 @@ namespace Chess
             button1.BorderBrush = Brushes.Black;
             button1.BorderThickness = new Thickness(1);
 
-            if (!castling)
+            if (!castling) //текстовое описание для рокировки
             {
-                TextTurn(button1, button2); //запись хода
-                //тектовые изменения
+                TextTurn(button1, button2);
                 turnNumber++;
                 TurnTextBox.Text = (turnNumber + 1).ToString();
                 SideTextBox.Text = ((ChessSide)(turnNumber % 2)).ToString();
@@ -508,6 +499,8 @@ namespace Chess
             if (button2.Type == ChessType.King)//если срублен король
             {
                 MessageBox.Show((ChessSide)(turnNumber % 2) + " Win");
+                TextBox1.Text += "Check and mate\n";
+                FunImage.Background = null;
                 //DisableButtons();
             }
 
@@ -552,7 +545,6 @@ namespace Chess
                 transButton = button2;
                 Transformation(button1.Side, button2.X, button2.Y);
             }
-
         }
 
         public void Transformation(ChessSide t, int X, int Y) //трансформер пешки
@@ -580,15 +572,19 @@ namespace Chess
             {
                 case ChessType.Rook:
                     newButton = new Rook(temp.Side, ChessType.Rook, temp.X, temp.Y);
+                    TextBox1.Text += "Transform to Rook\n";
                     break;
                 case ChessType.Bishop:
                     newButton = new Bishop(temp.Side, ChessType.Bishop, temp.X, temp.Y);
+                    TextBox1.Text += "Transform to Bishop\n";
                     break;
                 case ChessType.Knight:
                     newButton = new Knight(temp.Side, ChessType.Knight, temp.X, temp.Y);
+                    TextBox1.Text += "Transform to Knight\n";
                     break;
                 case ChessType.Queen:
                     newButton = new Queen(temp.Side, ChessType.Queen, temp.X, temp.Y);
+                    TextBox1.Text += "Transform to Queen\n";
                     break;
             }
             newButton.Background = transButton.Background;
@@ -639,7 +635,7 @@ namespace Chess
         {
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
-                    if (button.Side != buttonMap[i, j].Side && buttonMap[i, j].Side != ChessSide.NoSide && buttonMap[i, j].Potential(button.X, button.Y, button.Side))//если кто-то может дойти до короля
+                    if (button.Side != buttonMap[i, j].Side && buttonMap[i, j].Side != ChessSide.NoSide && buttonMap[i, j].Potential(button.X, button.Y, button.Side)) //если кто-то может дойти до короля
                         return true;
             return false;
         }
@@ -650,9 +646,6 @@ namespace Chess
                 for (int j = 0; j < 8; j++)
                     buttonMap[i, j].IsEnabled = false; 
         }
-
-        public void NoCLick(object sender, RoutedEventArgs e) { NewButton Button = (NewButton)sender; }//просто потому что при .disable все кнопки становять сядефольтными и не прозрачными
-
 
         public void LightThema(object sender, RoutedEventArgs e)
         {
@@ -733,6 +726,5 @@ namespace Chess
                     + " " + ((char)(65 + button1.Y)).ToString().ToLower() + (8 - button1.X)
                     + " " + ((char)(65 + button2.Y)).ToString().ToLower() + (8 - button2.X)
                     + " " + ConvertToUnicode(button2.Type, button2.Side) + "\n";
-
     }
 }
