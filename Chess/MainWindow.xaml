@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chess"
         mc:Ignorable="d"
-        Title="Chess" Height="580" Width="740" ResizeMode="NoResize">
+        Title="Chess" Height="580" Width="740" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
 
 
     <Grid x:Name="chessBackBoard" Background="Peru">
@@ -26,15 +26,36 @@
         <UniformGrid x:Name="chessLetter1" Grid.Row="2" Grid.Column="1" Columns="8" />
         <UniformGrid x:Name="chessNumber1" Grid.Row="1" Grid.Column="0" Rows="8"/>
         <UniformGrid x:Name="chessLetter2" Grid.Row="0" Grid.Column="1" Columns="8" />
-        <UniformGrid x:Name="chessNumber2" Grid.Row="1" Grid.Column="4" Rows="8"/>
+        <UniformGrid x:Name="chessNumber2" Grid.Row="1" Grid.Column="2" Rows="8"/>
 
-        <UniformGrid x:Name="chessBoard" Rows="8" Columns="8" Grid.Column="1" Grid.Row="1"  Panel.ZIndex="1"/>
+        <Grid x:Name="chessBoard" Grid.Column="1" Grid.Row="1"  Panel.ZIndex="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+        </Grid>
 
 
         <Menu x:Name="menu" Grid.Column="5" Grid.Row="0" Background="RosyBrown">
             <MenuItem Header="Menu">
                 <MenuItem Header="Restart" Click="RestartClick" ></MenuItem>
-                <MenuItem Header="Turn Back(Beta)" Click="BackTurnClick" ></MenuItem>
+                <!--<MenuItem Header="Turn Back(Beta)" Click="BackTurnClick" ></MenuItem>-->
                 <Separator />
                 <MenuItem Header="Themes" >
                     <MenuItem Header="Light" Click="LightThema"></MenuItem>
