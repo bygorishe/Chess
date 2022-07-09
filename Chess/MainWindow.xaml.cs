@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using static System.Math;
 
 namespace Chess
@@ -15,6 +17,7 @@ namespace Chess
             CreateMap(); //отрисовка задника
             Start();  //фигуры и прочее
         }
+        #region Structs(Types, map, etc.)
         public enum ChessSide
         {
             White = 0,
@@ -42,15 +45,14 @@ namespace Chess
         }
         public class NoType : NewButton
         {
-            public override bool Potential(int x2, int y2, ChessSide s)
-            {
-                return true;
-            }
+            private SolidColorBrush nobrush = new SolidColorBrush(Color.FromArgb(0, 255, 255, 255)); //если прсто null то появляются проблемы с выделением кнопки, не решаемые setZIndex
+            public override bool Potential(int x2, int y2, ChessSide s) => true;
             public NoType(ChessSide Side, ChessType Type, int X, int Y) {
                 this.Side = Side;
                 this.Type = Type;
                 this.X = X;
                 this.Y = Y;
+                Background = nobrush;
             }
         }
         public class Pawn : NewButton
@@ -69,7 +71,7 @@ namespace Chess
                 {
                     //chessBoard.Children.RemovebuttonMap[X, Y + Sign(y2 - Y)]);
                     NoType button = new NoType(ChessSide.NoSide, ChessType.Notype, X, Y + Sign(y2 - Y));
-                    button.Background = buttonMap[X, Y + Sign(y2 - Y)].Background;
+                    //button.Background = buttonMap[X, Y + Sign(y2 - Y)].Background;
                     button.BorderBrush = Brushes.Black;
                     Grid.SetRow(button, X);
                     Grid.SetColumn(button, Y + Sign(y2 - Y));
@@ -95,6 +97,7 @@ namespace Chess
                 else
                     img.Source = new BitmapImage(new Uri("Fig/pawnWhite.png", UriKind.Relative));
                 Content = img;
+                Background = null;
             }
         }
         public class Rook : NewButton
@@ -115,6 +118,7 @@ namespace Chess
                 else
                     img.Source = new BitmapImage(new Uri("Fig/rookWhite.png", UriKind.Relative));
                 Content = img;
+                Background = null;
             }
         }
         public class Knight : NewButton
@@ -135,6 +139,7 @@ namespace Chess
                 else
                     img.Source = new BitmapImage(new Uri("Fig/knightWhite.png", UriKind.Relative));
                 Content = img;
+                Background = null;
             }
         }
         public class Bishop : NewButton
@@ -155,6 +160,7 @@ namespace Chess
                 else
                     img.Source = new BitmapImage(new Uri("Fig/bishopWhite.png", UriKind.Relative));
                 Content = img;
+                Background = null;
             }
         }
         public class Queen : NewButton
@@ -175,6 +181,7 @@ namespace Chess
                 else
                     img.Source = new BitmapImage(new Uri("Fig/queenWhite.png", UriKind.Relative));
                 Content = img;
+                Background = null;
             }
         }
         public class King : NewButton
@@ -195,6 +202,7 @@ namespace Chess
                 else
                     img.Source = new BitmapImage(new Uri("Fig/kingWhite.png", UriKind.Relative));
                 Content = img;
+                Background = null;      
             }
         }
 
@@ -222,8 +230,9 @@ namespace Chess
         //   {2,20,20,20,6,20,20,2}
         //};
 
-        public static NewButton[,] buttonMap = new NewButton[8, 8];
-        public static NewButton passantButton; //кнопка для рокировки
+        //********************************************************************************************************************************************
+        public static NewButton[,] buttonMap = new NewButton[8, 8]; //ужас блять просто поправить тут все надо*****************************************
+        public static NewButton passantButton; //кнопка для рокировки*
         public NewButton previousButton,  //запоминаем кнопку для хода     
             transButton,  //для взятия на проходе
             whiteKingPointer, blackKingPointer; //указатели на королей для шаха
@@ -231,6 +240,8 @@ namespace Chess
         public static bool whiteShah = false, blackShah = false;   //флаг шаха
         public bool themaLight = true; //включена ли исходная цветовая тема 
         public Brush[] brushes = { Brushes.White, Brushes.Black };
+        public List<Rectangle> rectanglesList = new List<Rectangle>(64);
+        #endregion
 
         public static bool HorizontalVertical(int x1, int y1, int x2, int y2, ChessSide s, bool check)  //верх низ лево право
         {
@@ -302,7 +313,14 @@ namespace Chess
                 textBlock1.TextAlignment = TextAlignment.Center;
                 textBlock.VerticalAlignment = VerticalAlignment.Center;
                 chessLetter2.Children.Add(textBlock1);
-            }         
+            }
+            for (int i = 0; i < 64; i++)
+            {
+                Rectangle rectangle = new Rectangle();
+                chessBoardBackground.Children.Add(rectangle);
+                rectanglesList.Add(rectangle);
+            }
+
         }
 
         public void RestartClick(object sender, RoutedEventArgs e) => Start(); //рестарт просто переставляет все фигуры на исходное положение и откатывает текстовые элементы
@@ -344,12 +362,13 @@ namespace Chess
                             break;
                     }
                     buttonMap[i, j].BorderBrush = Brushes.Black;
+                    //Panel.SetZIndex(buttonMap[i, j], 10000000); //не помогает т.к. кнопка с пустым фоном все равно может не выделяться
                     chessBoard.Children.Add(buttonMap[i, j]);
                     Grid.SetColumn(buttonMap[i, j], j);
                     Grid.SetRow(buttonMap[i, j], i);
                 }
-            whiteKingPointer = buttonMap[7, 4];    //делаем ссылки на королей для отслеживания шаха
-            blackKingPointer = buttonMap[0, 4];
+            //whiteKingPointer = buttonMap[7, 4];    //делаем ссылки на королей для отслеживания шаха
+            //blackKingPointer = buttonMap[0, 4];
 
             ThemaChange(themaLight);  //раскрашиваем все в соответсвии с выбранной темой
 
@@ -378,7 +397,6 @@ namespace Chess
                 if (tempWay == 1) //короткая
                 {
                     str = "O-O";
-                    //подумать над оптимизацией алгоритма
                     for (int j = previousButton.Y + 1; j < pressedButton.Y; j++)
                         if (buttonMap[previousButton.X, j].Side != ChessSide.NoSide)
                             castling = false;
@@ -410,12 +428,9 @@ namespace Chess
                             if (Shah(buttonMap[previousButton.X, i]))
                                 castling = false;
                         }
-                        //******************************************//
-                        //добавил это для исправления хода//
                         if (!castling)
                             for (int i = previousButton.Y - 1; i > pressedButton.Y; i--)
                                 buttonMap[previousButton.X, i].Side = ChessSide.NoSide;
-                        //*******************************************//
                     }
                 }
                 if (castling)//если все-таки рокировка возможна
@@ -444,6 +459,10 @@ namespace Chess
                 pressedButton.BorderBrush = Brushes.Aquamarine;                    
                 pressedButton.BorderThickness = new Thickness(5);
                 previousButton = pressedButton;   //запоминаем первое нажатие
+
+
+                //*****************проходка по всем кнопкам и чек потеншиал. выделяем зеленым доступные для хода клетки
+
             }
             //второе
             else if (previousButton != null && previousButton.Potential(pressedButton.X, pressedButton.Y, pressedButton.Side))
@@ -457,25 +476,24 @@ namespace Chess
                     chessBoard.Children.Add(passantButton);
                     passantButton = null;
                 }
-
-                if ((turnNumber % 2) == 0)
-                {
-                    whiteShah = Shah(whiteKingPointer);
-                    if (whiteShah)
-                    {
-                        FunImage.Background = Brushes.Red;
-                        TextBox1.Text += "Check White\n";
-                    }
-                }
-                else
-                {
-                    blackShah = Shah(blackKingPointer);
-                    if (blackShah)
-                    {
-                        FunImage.Background = Brushes.Red;
-                        TextBox1.Text += "Check Black\n";
-                    }
-                }              
+                //if ((turnNumber % 2) == 0)
+                //{
+                //    whiteShah = Shah(whiteKingPointer);
+                //    if (whiteShah)
+                //    {
+                //        FunImage.Background = Brushes.Red;
+                //        TextBox1.Text += "Check White\n";
+                //    }
+                //}
+                //else
+                //{
+                //    blackShah = Shah(blackKingPointer);
+                //    if (blackShah)
+                //    {
+                //        FunImage.Background = Brushes.Red;
+                //        TextBox1.Text += "Check Black\n";
+                //    }
+                //}
                 //*******зануляем сссылку во избежание ложных ходов*****//
                 previousButton = null; 
             }
@@ -532,13 +550,11 @@ namespace Chess
 
             button1.BorderBrush = Brushes.Black;
             button.BorderBrush = Brushes.Black;
-            button.Background = button1.Background;
-            button1.Background = button2.Background;
 
-            //if (button2.Type == ChessType.King && button2.Side == ChessSide.White)  //новая ссылка на королей
-            //    whiteKingPointer = button2;
-            //else if (button2.Type == ChessType.King && button2.Side == ChessSide.Black)
-            //    blackKingPointer = button2;
+            if (button2.Type == ChessType.King && button2.Side == ChessSide.White)  //новая ссылка на королей
+                whiteKingPointer = button2;
+            else if (button2.Type == ChessType.King && button2.Side == ChessSide.Black)
+                blackKingPointer = button2;
 
             if (button1.Type == ChessType.Pawn && (button1.X == 0 || button1.X == 7))  //пешка дошла до противооложной стороны
             {
@@ -688,9 +704,9 @@ namespace Chess
                 for (int j = 0; j < 8; j++)
                 {
                     if ((i + j) % 2 == 0)
-                        buttonMap[i, j].Background = br1;
+                        rectanglesList[i + 8 * j].Fill = br1;
                     else
-                        buttonMap[i, j].Background = br2;
+                        rectanglesList[i + 8 * j].Fill = br2;
                 }
         }
 
