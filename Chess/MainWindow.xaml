@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chess"
         mc:Ignorable="d"
-        Title="Chess" Height="580" Width="740" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="Chess" Height="540" Width="740" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Normal" WindowStyle="None">
 
 
     <Grid x:Name="chessBackBoard" Background="Peru">
@@ -30,7 +30,7 @@
 
         <UniformGrid x:Name="chessBoardBackground" Grid.Column="1" Grid.Row="1"/>
 
-        <Grid x:Name="chessBoard" Grid.Column="1" Grid.Row="1">
+        <Grid x:Name="chessBoard" Grid.Column="1" Grid.Row="1" Panel.ZIndex="123">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -53,15 +53,14 @@
             </Grid.ColumnDefinitions>
         </Grid>
 
-
         <Menu x:Name="menu" Grid.Column="5" Grid.Row="0" Background="RosyBrown">
             <MenuItem Header="Menu">
-                <MenuItem Header="Restart" Click="RestartClick" ></MenuItem>
-                <!--<MenuItem Header="Turn Back(Beta)" Click="BackTurnClick" ></MenuItem>-->
+                <MenuItem Header="Restart" Click="RestartClick"/>
+                <MenuItem Header="Exit" Click="AppExit"/>
                 <Separator />
                 <MenuItem Header="Themes" >
-                    <MenuItem Header="Light" Click="LightThema"></MenuItem>
-                    <MenuItem Header="Dark" Click="DarkThema"></MenuItem>
+                    <MenuItem Header="Light" Click="LightThema"/>
+                    <MenuItem Header="Dark" Click="DarkThema"/>
                 </MenuItem>
             </MenuItem>
         </Menu>
@@ -84,9 +83,6 @@
             <TextBox x:Name="TurnTextBox" Grid.Column="1" IsEnabled="False"></TextBox>
             <TextBox Grid.Column="2" IsEnabled="False">Side:</TextBox>
             <TextBox x:Name="SideTextBox" Grid.Column="3" IsEnabled="False"></TextBox>
-
         </Grid>
     </Grid>
-
-
 </Window>
