@@ -1,4 +1,4 @@
-![](https://github.com/bygorishe/bygorishe_test/blob/master/ChessPic/chessIcon.ico) # Chess 
+# ![](https://github.com/bygorishe/bygorishe_test/blob/master/ChessPic/chessIcon.ico) Chess 
 
 ![](https://github.com/bygorishe/bygorishe_test/blob/master/ChessPic/1.jpg)
 
