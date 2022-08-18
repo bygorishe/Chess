@@ -18,9 +18,6 @@ namespace Chess
             Start();  //фигуры и прочее
         }
 
-
-
-
         private readonly int[,] map = new int[8, 8]  //изначальное расположение фигур 
         {
            {12,13,14,15,16,14,13,12},           // первое число - сторона (1-черные, 2-пустые, 0-белые)
@@ -108,30 +105,16 @@ namespace Chess
             for (int i = 0; i < 8; i++)    //создаем кнопки-фигуры
                 for (int j = 0; j < 8; j++)
                 {
-                    switch ((ChessType)(map[i, j] % 10))
+                    buttonMap[i, j] = (ChessType)(map[i, j] % 10) switch
                     {
-                        case ChessType.Pawn:
-                            buttonMap[i, j] = new Pawn((ChessSide)(map[i, j] / 10), ChessType.Pawn, i, j);
-                            break;
-                        case ChessType.Rook:
-                            buttonMap[i, j] = new Rook((ChessSide)(map[i, j] / 10), ChessType.Rook, i, j);
-                            break;
-                        case ChessType.Knight:
-                            buttonMap[i, j] = new Knight((ChessSide)(map[i, j] / 10), ChessType.Knight, i, j);
-                            break;
-                        case ChessType.Bishop:
-                            buttonMap[i, j] = new Bishop((ChessSide)(map[i, j] / 10), ChessType.Bishop, i, j);
-                            break;
-                        case ChessType.Queen:
-                            buttonMap[i, j] = new Queen((ChessSide)(map[i, j] / 10), ChessType.Queen, i, j);
-                            break;
-                        case ChessType.King:
-                            buttonMap[i, j] = new King((ChessSide)(map[i, j] / 10), ChessType.King, i, j);
-                            break;
-                        default:
-                            buttonMap[i, j] = new NoType((ChessSide)(map[i, j] / 10), ChessType.Notype, i, j);
-                            break;
-                    }
+                        ChessType.Pawn => new Pawn((ChessSide)(map[i, j] / 10), ChessType.Pawn, i, j),
+                        ChessType.Rook => new Rook((ChessSide)(map[i, j] / 10), ChessType.Rook, i, j),
+                        ChessType.Knight => new Knight((ChessSide)(map[i, j] / 10), ChessType.Knight, i, j),
+                        ChessType.Bishop => new Bishop((ChessSide)(map[i, j] / 10), ChessType.Bishop, i, j),
+                        ChessType.Queen => new Queen((ChessSide)(map[i, j] / 10), ChessType.Queen, i, j),
+                        ChessType.King => new King((ChessSide)(map[i, j] / 10), ChessType.King, i, j),
+                        _ => new NoType((ChessSide)(map[i, j] / 10), ChessType.Notype, i, j),
+                    };
                     buttonMap[i, j].BorderBrush = Brushes.Black;
                     //Panel.SetZIndex(buttonMap[i, j], 10000000); //не помогает т.к. кнопка с пустым фоном все равно может не выделяться
                     chessBoard.Children.Add(buttonMap[i, j]);
@@ -144,8 +127,8 @@ namespace Chess
             ThemaChange(themaLight);  //раскрашиваем все в соответсвии с выбранной темой
 
             foreach (UIElement c in chessBoard.Children)
-                if (c is NewButton)
-                    ((NewButton)c).Click += Pressed;
+                if (c is NewButton b)
+                    b.Click += Pressed;
         }
 
         private void Pressed(object sender, RoutedEventArgs e) //эвент нажатия на кнопку
@@ -212,7 +195,7 @@ namespace Chess
                     TurnTextBox.Text = (turnNumber + 1).ToString();
                     SideTextBox.Text = ((ChessSide)(turnNumber % 2)).ToString();
                     FunImage.Background = brushes[turnNumber % 2];
-                    TextBox1.Text += "Turn: " + (turnNumber) + "\t" + str + "\n";
+                    TextBox1.Text += "Turn: " + turnNumber + "\t" + str + "\n";
 
                     //*******зануляем сссылку во избежание ложных ходов*****//
                     previousButton = null;
@@ -315,7 +298,7 @@ namespace Chess
                 MessageBox.Show((ChessSide)(turnNumber % 2) + " Win");
                 TextBox1.Text += "Check and mate\n";
                 FunImage.Background = null;
-                DisableButtons(); 
+                DisableButtons();
             }
 
             if (button2.Type == ChessType.King && button2.Side == ChessSide.White)  //новая ссылка на королей
@@ -344,8 +327,8 @@ namespace Chess
             FunImage.Children.Add(b4);
 
             foreach (UIElement c in FunImage.Children)
-                if (c is NewButton)
-                    ((NewButton)c).Click += TransformationClick;
+                if (c is NewButton b)
+                    b.Click += TransformationClick;
         }
 
         private void TransformationClick(object sender, RoutedEventArgs e)
@@ -369,6 +352,8 @@ namespace Chess
                 case ChessType.Queen:
                     newButton = new Queen(temp.Side, ChessType.Queen, temp.X, temp.Y);
                     TextBox1.Text += "Transform to Queen\n";
+                    break;
+                default:
                     break;
             }
             chessBoard.Children.Remove(transButton);
@@ -450,22 +435,22 @@ namespace Chess
             switch (type)
             {
                 case ChessType.Pawn:
-                    _ = (side == ChessSide.White) ? str = "\u2659" : str = "\u265f";
+                    str = (side == ChessSide.White) ? "\u2659" : "\u265f";
                     break;
                 case ChessType.Rook:
-                    _ = (side == ChessSide.White) ? str = "\u2656" : str = "\u265c";
+                    str = (side == ChessSide.White) ? "\u2656" : "\u265c";
                     break;
                 case ChessType.Knight:
-                    _ = (side == ChessSide.White) ? str = "\u2658" : str = "\u265e";
+                    str = (side == ChessSide.White) ? "\u2658" : "\u265e";
                     break;
                 case ChessType.Bishop:
-                    _ = (side == ChessSide.White) ? str = "\u2657" : str = "\u265d";
+                    str = (side == ChessSide.White) ? "\u2657" : "\u265d";
                     break;
                 case ChessType.Queen:
-                    _ = (side == ChessSide.White) ? str = "\u2655" : str = "\u265b";
+                    str = (side == ChessSide.White) ? "\u2655" : "\u265b";
                     break;
                 case ChessType.King:
-                    _ = (side == ChessSide.White) ? str = "\u2654" : str = "\u265a";
+                    str = (side == ChessSide.White) ? "\u2654" : "\u265a";
                     break;
             }
             return str;
