@@ -2,88 +2,92 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>FigClasses\Support\Fig\chessIcon.ico</ApplicationIcon>
     <Win32Resource />
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="FigClasses\Support\Fig\**" />
-    <EmbeddedResource Remove="FigClasses\Support\Fig\**" />
-    <Page Remove="FigClasses\Support\Fig\**" />
+    <Compile Remove="Models\FigClasses\Support\Fig\**" />
+    <EmbeddedResource Remove="Models\FigClasses\Support\Fig\**" />
+    <Page Remove="Models\FigClasses\Support\Fig\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\rookWhite.png">
+    <Resource Include="Models\FigClasses\Support\Fig\rookWhite.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\rookBlack.png">
+    <Resource Include="Models\FigClasses\Support\Fig\rookBlack.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\queenWhite.png">
+    <Resource Include="Models\FigClasses\Support\Fig\queenWhite.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\queenBlack.png">
+    <Resource Include="Models\FigClasses\Support\Fig\queenBlack.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\pawnWhite.png">
+    <Resource Include="Models\FigClasses\Support\Fig\pawnWhite.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\pawnBlack.png">
+    <Resource Include="Models\FigClasses\Support\Fig\pawnBlack.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\knightWhite.png">
+    <Resource Include="Models\FigClasses\Support\Fig\knightWhite.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\knightBlack.png">
+    <Resource Include="Models\FigClasses\Support\Fig\knightBlack.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\kingWhite.png">
+    <Resource Include="Models\FigClasses\Support\Fig\kingWhite.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\kingBlack.png">
+    <Resource Include="Models\FigClasses\Support\Fig\kingBlack.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\bishopWhite.png">
+    <Resource Include="Models\FigClasses\Support\Fig\bishopWhite.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="FigClasses\Support\Fig\bishopBlack.png">
+    <Resource Include="Models\FigClasses\Support\Fig\bishopBlack.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="View\" />
   </ItemGroup>
 
 </Project>

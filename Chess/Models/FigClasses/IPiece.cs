@@ -3,11 +3,11 @@ using Chess.Enums;
 
 namespace Chess
 {
-    public abstract class NewButton : Button
+    public interface IPiece
     {
-        public ChessSide Side { get; set; }
-        public int NumOfFirstTurn { get; set; } = 0;
-        public ChessType Type { get; protected set; }
+        public ChessSide Side { get; }
+        public bool FirstTurn { get; set; }
+        public ChessType Type { get; }
         public int X { get; set; }
         public int Y { get; set; }
         public abstract bool Potential(int x2, int y2, ChessSide s);
