@@ -1,6 +1,6 @@
 # ![](https://github.com/bygorishe/bygorishe_test/blob/master/ChessPic/chessIcon.ico)
 
-## Chess 
+## Chess  (VER_2 in progress)
 ![](https://github.com/bygorishe/bygorishe_test/blob/master/ChessPic/demostration.gif)
 
 
